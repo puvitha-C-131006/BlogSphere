@@ -11,7 +11,9 @@ const Navbar = () => {
   const { isDarkMode, toggleDarkMode } = useThemeStore();
   const { searchTerm, setSearchTerm } = useSearchStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -20,6 +22,9 @@ const Navbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsDropdownOpen(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target) && !event.target.closest('.mobile-menu-trigger')) {
+        setIsMobileMenuOpen(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -27,8 +32,14 @@ const Navbar = () => {
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
     logout();
     navigate('/');
+  };
+
+  const closeMenus = () => {
+    setIsDropdownOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -36,7 +47,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-8">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+            <Link to="/" onClick={closeMenus} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <FiFeather className="w-6 h-6 text-primary dark:text-white" strokeWidth={2.5} />
               <span className="font-bold text-xl text-secondary dark:text-white tracking-tight">BlogSphere</span>
             </Link>
@@ -95,15 +106,15 @@ const Navbar = () => {
                       <p className="text-xs text-gray-500 dark:text-gray-400">@{user.username || 'username'} ({user.role || 'writer'})</p>
                     </div>
                     
-                    <Link to="/profile" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <Link to="/profile" onClick={closeMenus} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <FiUser className="w-4 h-4 text-gray-400" />
                       My Profile
                     </Link>
-                    <Link to="/create" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <Link to="/create" onClick={closeMenus} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <FiEdit3 className="w-4 h-4 text-gray-400" />
                       Creator Studio
                     </Link>
-                    <Link to="/dashboard" onClick={() => setIsDropdownOpen(false)} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <Link to="/dashboard" onClick={closeMenus} className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                       <FiBookOpen className="w-4 h-4 text-gray-400" />
                       My Feed
                     </Link>
@@ -125,6 +136,7 @@ const Navbar = () => {
             )}
           </div>
 
+          {/* Mobile menu button */}
           <div className="md:hidden flex items-center gap-2">
             <button 
               onClick={toggleDarkMode}
@@ -132,12 +144,86 @@ const Navbar = () => {
             >
               {isDarkMode ? <FiSun className="w-5 h-5" /> : <FiMoon className="w-5 h-5" />}
             </button>
-            <button className="text-gray-600 dark:text-gray-300 hover:text-primary focus:outline-none p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+            <button 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="mobile-menu-trigger text-gray-600 dark:text-gray-300 hover:text-primary focus:outline-none p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
               <FiMenu className="h-6 w-6" />
             </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Panel */}
+      {isMobileMenuOpen && (
+        <div ref={mobileMenuRef} className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 absolute w-full left-0 animate-in slide-in-from-top-2 duration-200 shadow-xl">
+          <div className="px-4 pt-2 pb-6 space-y-1">
+            {location.pathname === '/' && (
+              <div className="py-3 mb-2 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FiSearch className="text-gray-400 w-4 h-4" />
+                </div>
+                <input 
+                  type="text" 
+                  placeholder="Search stories, topics..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm rounded-full py-2.5 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-primary border border-gray-200 dark:border-gray-700"
+                />
+              </div>
+            )}
+            
+            <Link to="/" onClick={closeMenus} className="block px-3 py-2.5 rounded-md text-base font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800">
+              Explore
+            </Link>
+            <Link to="/create" onClick={closeMenus} className="block px-3 py-2.5 rounded-md text-base font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800">
+              Creator Studio
+            </Link>
+            
+            {user ? (
+              <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+                <div className="flex items-center px-3 mb-4">
+                  <div className="flex-shrink-0">
+                    {user.avatar && !user.avatar.includes('dicebear') ? (
+                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full border border-gray-200 dark:border-gray-700 bg-white" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                        {user.name?.charAt(0).toUpperCase() || 'U'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-base font-medium text-gray-800 dark:text-white">{user.name}</div>
+                    <div className="text-sm font-medium text-gray-500">@{user.username || 'username'}</div>
+                  </div>
+                  <button className="ml-auto p-2 text-gray-500 hover:text-primary dark:text-gray-400">
+                    <FiBell className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <Link to="/profile" onClick={closeMenus} className="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <FiUser className="w-5 h-5 text-gray-400" />
+                  My Profile
+                </Link>
+                <Link to="/dashboard" onClick={closeMenus} className="flex items-center gap-3 px-3 py-2.5 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">
+                  <FiBookOpen className="w-5 h-5 text-gray-400" />
+                  My Feed
+                </Link>
+                <button onClick={handleLogout} className="flex items-center gap-3 w-full text-left px-3 py-2.5 rounded-md text-base font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 mt-1">
+                  <FiLogOut className="w-5 h-5" />
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-800">
+                <Button to="/login" onClick={closeMenus} className="w-full justify-center rounded-full bg-[#0f172a] hover:bg-black dark:bg-white dark:text-black py-3 text-base">
+                  Sign In
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
