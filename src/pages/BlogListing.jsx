@@ -48,73 +48,59 @@ const BlogListing = () => {
       {/* Filtered By Bar (Only show if not All Stories) */}
       {selectedCategory !== 'All Stories' && (
         <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-3 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto flex items-center text-sm">
-            <span className="text-gray-500 mr-2">Filtered by:</span>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-gray-900 dark:text-white">Category: {selectedCategory}</span>
-              <button 
-                onClick={() => setSelectedCategory('All Stories')}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
-              >
-                ✕
-              </button>
+          <div className="max-w-7xl mx-auto flex items-center justify-between text-sm">
+            <div className="flex items-center">
+              <span className="text-gray-500 mr-2">Filtered by:</span>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-gray-900 dark:text-white">Category: {selectedCategory}</span>
+                <button 
+                  onClick={() => setSelectedCategory('All Stories')}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
+            <button onClick={() => setSelectedCategory('All Stories')} className="font-semibold text-xs text-gray-900 dark:text-white hover:underline">Clear all filters</button>
           </div>
         </div>
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Explore Topics Section */}
-      <div className="mb-12">
-        <div className="flex items-center gap-2 mb-1">
-          <FiBookOpen className="w-6 h-6 text-gray-800 dark:text-gray-200" strokeWidth={1.5} />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Explore Topics</h2>
+      <div className="mb-12 flex justify-between items-start">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <FiBookOpen className="w-5 h-5 text-gray-800 dark:text-gray-200" strokeWidth={1.5} />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Explore Topics</h2>
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">Filter articles by your favorite categories</p>
+          
+          <div className="flex flex-wrap gap-2">
+            {categories.map(category => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-colors border ${
+                  selectedCategory === category 
+                    ? 'bg-[#0f172a] text-white border-[#0f172a] dark:bg-white dark:text-gray-900 dark:border-white' 
+                    : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
-        <p className="text-sm text-gray-400 dark:text-gray-500 mb-6">Filter articles by your favorite categories</p>
-        
-        <div className="flex flex-wrap gap-3">
-          {categories.map(category => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors border ${
-                selectedCategory === category 
-                  ? 'bg-[#0f172a] text-white border-[#0f172a] dark:bg-white dark:text-gray-900 dark:border-white' 
-                  : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800'
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+        <button onClick={() => setSelectedCategory('All Stories')} className="font-semibold text-xs text-gray-900 dark:text-white hover:underline pt-1">Reset Category</button>
       </div>
 
       {/* Search Results Section */}
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">Search Results</h2>
-          <p className="text-sm text-gray-400 dark:text-gray-500">Showing {filteredPosts.length} articles matching filters</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">Search Results</h2>
+          <p className="text-xs text-gray-400 dark:text-gray-500">Showing {filteredPosts.length} articles matching filters</p>
         </div>
-        <Button 
-          onClick={async () => {
-            if(window.confirm('Are you sure you want to delete ALL posts to make the project fresh?')) {
-              try {
-                const { deleteDoc, doc } = await import('firebase/firestore');
-                for (const post of posts) {
-                  await deleteDoc(doc(db, 'posts', post.id));
-                }
-                setPosts([]);
-                alert('All posts deleted successfully! Your project is fresh.');
-              } catch (e) {
-                console.error(e);
-                alert('Error deleting posts');
-              }
-            }
-          }}
-          className="bg-red-500 hover:bg-red-600 text-white rounded-full px-4 py-2 text-sm"
-        >
-          Clear All Posts (Fresh Start)
-        </Button>
       </div>
 
       {isLoading ? (
