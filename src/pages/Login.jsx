@@ -1,21 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
 import useAuthStore from '../store/useAuthStore';
+import { auth } from '../config/firebase';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, error: authError } = useAuthStore();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login({
-      name: 'John Doe',
-      avatar: 'https://ui-avatars.com/api/?name=John+Doe&background=random',
-      email: 'john@example.com'
-    });
-    navigate('/dashboard');
+    setLoading(true);
+    const success = await login(email, password);
+    setLoading(false);
+    if (success) {
+      navigate('/dashboard');
+    }
+  };
+
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      alert("Please enter your email address first to reset your password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert("Password reset email sent! Please check your inbox.");
+    } catch (error) {
+      alert("Error sending reset email: " + error.message);
+    }
   };
 
   return (
@@ -26,10 +45,13 @@ const Login = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {authError && <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">{authError}</div>}
         <Input 
           label="Email" 
           id="email" 
           type="email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           placeholder="Enter your email" 
           required 
         />
@@ -38,6 +60,8 @@ const Login = () => {
           label="Password" 
           id="password" 
           type="password" 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••" 
           required 
         />
@@ -56,14 +80,14 @@ const Login = () => {
           </div>
 
           <div className="text-sm">
-            <a href="#" className="font-semibold text-primary hover:text-blue-700 transition-colors">
+            <button type="button" onClick={handleForgotPassword} className="font-semibold text-primary hover:text-blue-700 transition-colors">
               Forgot password?
-            </a>
+            </button>
           </div>
         </div>
 
-        <Button type="submit" className="w-full">
-          Sign in
+        <Button type="submit" disabled={loading} className="w-full">
+          {loading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>
 

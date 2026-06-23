@@ -54,18 +54,18 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto w-full pt-8 pb-16">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    <div className="max-w-6xl mx-auto w-full px-4 md:px-8 pt-4 md:pt-8 pb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-10">
         
         {/* Left Column - Feed/Tabs */}
         <div className="lg:col-span-2">
           {/* Tabs */}
-          <div className="border-b border-gray-200 dark:border-gray-800 mb-8 flex gap-8">
+          <div className="border-b border-gray-200 dark:border-gray-800 mb-6 flex gap-4 md:gap-8 overflow-x-auto whitespace-nowrap no-scrollbar">
             {tabs.map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab.split(' ')[0])}
-                className={`pb-4 text-sm font-medium transition-colors relative ${
+                className={`pb-3 md:pb-4 text-sm font-medium transition-colors relative ${
                   activeTab === tab.split(' ')[0]
                     ? 'text-secondary dark:text-white'
                     : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
@@ -84,15 +84,15 @@ const Dashboard = () => {
             loading ? (
               <div className="flex justify-center py-12"><FiLoader className="animate-spin w-8 h-8 text-primary" /></div>
             ) : userPosts.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {userPosts.map(post => (
                   <BlogCard key={post.id} post={post} onEdit={handleEdit} onDelete={handleDelete} />
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800 rounded-3xl p-16 flex flex-col items-center justify-center text-center">
+              <div className="bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800 rounded-3xl p-8 md:p-16 flex flex-col items-center justify-center text-center">
                 <h3 className="text-xl font-bold text-secondary dark:text-white mb-2">No stories yet</h3>
-                <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">
+                <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 md:mb-8">
                   Start writing your first story to see it here.
                 </p>
                 <Button to="/create" variant="outline" className="rounded-full px-6">
@@ -103,12 +103,12 @@ const Dashboard = () => {
           )}
           
           {activeTab === 'Bookmarks' && (
-            <div className="bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800 rounded-3xl p-16 flex flex-col items-center justify-center text-center">
+            <div className="bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800 rounded-3xl p-8 md:p-16 flex flex-col items-center justify-center text-center">
               <div className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-sm flex items-center justify-center mb-6 text-gray-400">
                 <FiBookmark className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-secondary dark:text-white mb-2">No bookmarked stories</h3>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mb-8">
+              <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 md:mb-8">
                 Click the bookmark icon on any blog card to save it for reading later.
               </p>
               <Button variant="outline" className="rounded-full px-6">

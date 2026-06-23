@@ -95,33 +95,33 @@ const SingleBlog = () => {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
         <div className="absolute bottom-0 left-0 w-full">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-            <span className="px-3 py-1 bg-primary text-white text-sm font-semibold rounded-full shadow-sm mb-6 inline-block">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 md:pb-16">
+            <span className="px-3 py-1 bg-primary text-white text-xs md:text-sm font-semibold rounded-full shadow-sm mb-4 md:mb-6 inline-block">
               {post.category || 'Technology'}
             </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 md:mb-6 leading-tight">
               {post.title}
             </h1>
-            <div className="flex items-center gap-4 text-white/80 font-medium">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 text-white/80 text-sm md:text-base font-medium">
               <div className="flex items-center gap-2">
                 <img 
                   src={post.author?.avatar || `https://ui-avatars.com/api/?name=${post.author?.name || 'Anonymous'}&background=random`} 
                   alt={post.author?.name || 'Anonymous'} 
-                  className="w-10 h-10 rounded-full border-2 border-white/20 bg-white"
+                  className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-white/20 bg-white"
                 />
                 <span className="text-white">{post.author?.name || 'Anonymous'}</span>
               </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-white/40"></span>
-              <span>{post.createdAt?.toDate ? post.createdAt.toDate().toLocaleDateString() : 'Just now'}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-white/40"></span>
-              <span>{post.readTime || '5 min read'}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-white/40 hidden sm:block"></span>
+              <span className="hidden sm:block">{post.createdAt?.toDate ? post.createdAt.toDate().toLocaleDateString() : 'Just now'}</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-white/40 hidden sm:block"></span>
+              <span className="hidden sm:block">{post.readTime || '5 min read'}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
-        <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 lg:p-16 border border-gray-100">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 md:-mt-12 relative z-10">
+        <div className="bg-white rounded-2xl md:rounded-3xl shadow-xl p-6 md:p-12 lg:p-16 border border-gray-100">
           <div 
             className="prose prose-lg prose-blue max-w-none text-gray-600 [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-secondary [&_h2]:mb-4 [&_h2]:mt-8 [&_p]:mb-6 [&_p]:leading-relaxed"
             dangerouslySetInnerHTML={{ __html: post.content }}

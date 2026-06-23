@@ -90,9 +90,31 @@ const BlogListing = () => {
       </div>
 
       {/* Search Results Section */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">Search Results</h2>
-        <p className="text-sm text-gray-400 dark:text-gray-500">Showing {filteredPosts.length} articles matching filters</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight mb-1">Search Results</h2>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Showing {filteredPosts.length} articles matching filters</p>
+        </div>
+        <Button 
+          onClick={async () => {
+            if(window.confirm('Are you sure you want to delete ALL posts to make the project fresh?')) {
+              try {
+                const { deleteDoc, doc } = await import('firebase/firestore');
+                for (const post of posts) {
+                  await deleteDoc(doc(db, 'posts', post.id));
+                }
+                setPosts([]);
+                alert('All posts deleted successfully! Your project is fresh.');
+              } catch (e) {
+                console.error(e);
+                alert('Error deleting posts');
+              }
+            }
+          }}
+          className="bg-red-500 hover:bg-red-600 text-white rounded-full px-4 py-2 text-sm"
+        >
+          Clear All Posts (Fresh Start)
+        </Button>
       </div>
 
       {isLoading ? (
@@ -106,7 +128,7 @@ const BlogListing = () => {
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-24 px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-[2rem] mt-8 shadow-sm">
+        <div className="flex flex-col items-center justify-center py-16 md:py-24 px-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-3xl md:rounded-[2rem] mt-8 shadow-sm">
           <div className="w-16 h-16 bg-gray-50 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6">
             <FiSearch className="w-6 h-6 text-gray-400" strokeWidth={2} />
           </div>
